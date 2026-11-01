@@ -1,0 +1,683 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 32 8
+    bytecblock "status" "creator" "reward_microalgos" "submission_count" 0x151f7c75 "submission:" "deadline" 0x6f70656e 0x756e6465725f726576696577 0x6472616674 "winner" "review_started_at" 0x70656e64696e675f66756e64696e67 0x65787069726564 0x6469737075746564
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // contracts/bounty_escrow/contract.py:24
+    // self.creator = Account()
+    bytec_1 // "creator"
+    global ZeroAddress
+    app_global_put
+    // contracts/bounty_escrow/contract.py:25
+    // self.reward_microalgos = UInt64(0)
+    bytec_2 // "reward_microalgos"
+    intc_0 // 0
+    app_global_put
+    // contracts/bounty_escrow/contract.py:26
+    // self.deadline = UInt64(0)
+    bytec 6 // "deadline"
+    intc_0 // 0
+    app_global_put
+    // contracts/bounty_escrow/contract.py:27
+    // self.status = Bytes(b"draft")
+    bytec_0 // "status"
+    bytec 9 // 0x6472616674
+    app_global_put
+    // contracts/bounty_escrow/contract.py:28
+    // self.winner = Account()
+    bytec 10 // "winner"
+    global ZeroAddress
+    app_global_put
+    // contracts/bounty_escrow/contract.py:29
+    // self.submission_count = UInt64(0)
+    bytec_3 // "submission_count"
+    intc_0 // 0
+    app_global_put
+    // contracts/bounty_escrow/contract.py:30
+    // self.review_started_at = UInt64(0)
+    bytec 11 // "review_started_at"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // contracts/bounty_escrow/contract.py:15
+    // class BountyEscrowContract(ARC4Contract):
+    txn NumAppArgs
+    bz main___algopy_default_create@21
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    assert
+    pushbytess 0xc5e11bad 0x8f0922c2 0xb2095535 0x98af62bc 0x46175ebf 0xfa190cee 0x426370cc 0x8a73beef 0xfc39adc2 0x59998301 0x595905fb 0x176c0689 // method "bootstrap_bounty(address,uint64,uint64)void", method "minimum_funding_amount()uint64", method "fund_bounty(pay)void", method "submit_work(byte[])void", method "close_submissions()void", method "mark_disputed()void", method "approve_winner(address)void", method "refund_creator()void", method "get_status()byte[]", method "get_submission_count()uint64", method "has_submission(address)bool", method "get_submission_hash(address)byte[]"
+    txna ApplicationArgs 0
+    match bootstrap_bounty minimum_funding_amount fund_bounty submit_work close_submissions mark_disputed approve_winner refund_creator get_status get_submission_count has_submission get_submission_hash
+    err
+
+main___algopy_default_create@21:
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.bootstrap_bounty[routing]() -> void:
+bootstrap_bounty:
+    // contracts/bounty_escrow/contract.py:33
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // contracts/bounty_escrow/contract.py:35
+    // assert self.status == b"draft", "bounty already initialized"
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 9 // 0x6472616674
+    ==
+    assert // bounty already initialized
+    // contracts/bounty_escrow/contract.py:36
+    // assert reward_microalgos > 0, "reward must be greater than zero"
+    dig 1
+    assert // reward must be greater than zero
+    // contracts/bounty_escrow/contract.py:37
+    // assert deadline > Global.latest_timestamp, "deadline must be in the future"
+    dup
+    global LatestTimestamp
+    >
+    assert // deadline must be in the future
+    // contracts/bounty_escrow/contract.py:39
+    // self.creator = creator
+    bytec_1 // "creator"
+    uncover 3
+    app_global_put
+    // contracts/bounty_escrow/contract.py:40
+    // self.reward_microalgos = reward_microalgos
+    bytec_2 // "reward_microalgos"
+    uncover 2
+    app_global_put
+    // contracts/bounty_escrow/contract.py:41
+    // self.deadline = deadline
+    bytec 6 // "deadline"
+    swap
+    app_global_put
+    // contracts/bounty_escrow/contract.py:42
+    // self.status = Bytes(b"pending_funding")
+    bytec_0 // "status"
+    bytec 12 // 0x70656e64696e675f66756e64696e67
+    app_global_put
+    // contracts/bounty_escrow/contract.py:33
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.minimum_funding_amount[routing]() -> void:
+minimum_funding_amount:
+    // contracts/bounty_escrow/contract.py:46-47
+    // # reward + buffer for two inner payment transactions during approval/refund flows
+    // return self.reward_microalgos + UInt64(3_000)
+    intc_0 // 0
+    bytec_2 // "reward_microalgos"
+    app_global_get_ex
+    assert // check self.reward_microalgos exists
+    pushint 3000
+    +
+    // contracts/bounty_escrow/contract.py:44
+    // @arc4.abimethod
+    itob
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.fund_bounty[routing]() -> void:
+fund_bounty:
+    // contracts/bounty_escrow/contract.py:49
+    // @arc4.abimethod
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // contracts/bounty_escrow/contract.py:51
+    // assert self.status == b"pending_funding", "bounty is not waiting for funding"
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 12 // 0x70656e64696e675f66756e64696e67
+    ==
+    assert // bounty is not waiting for funding
+    // contracts/bounty_escrow/contract.py:52
+    // assert Txn.sender == self.creator, "only creator can fund the bounty"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "creator"
+    app_global_get_ex
+    assert // check self.creator exists
+    ==
+    assert // only creator can fund the bounty
+    // contracts/bounty_escrow/contract.py:53
+    // assert pay.sender == Txn.sender, "payment sender must match app call sender"
+    dup
+    gtxns Sender
+    txn Sender
+    ==
+    assert // payment sender must match app call sender
+    // contracts/bounty_escrow/contract.py:54
+    // assert pay.receiver == Global.current_application_address, "payment must fund the app account"
+    dup
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert // payment must fund the app account
+    // contracts/bounty_escrow/contract.py:55
+    // assert pay.amount >= self.minimum_funding_amount(), "insufficient funding amount"
+    gtxns Amount
+    // contracts/bounty_escrow/contract.py:46-47
+    // # reward + buffer for two inner payment transactions during approval/refund flows
+    // return self.reward_microalgos + UInt64(3_000)
+    intc_0 // 0
+    bytec_2 // "reward_microalgos"
+    app_global_get_ex
+    assert // check self.reward_microalgos exists
+    pushint 3000
+    +
+    // contracts/bounty_escrow/contract.py:55
+    // assert pay.amount >= self.minimum_funding_amount(), "insufficient funding amount"
+    >=
+    assert // insufficient funding amount
+    // contracts/bounty_escrow/contract.py:57
+    // self.status = Bytes(b"open")
+    bytec_0 // "status"
+    bytec 7 // 0x6f70656e
+    app_global_put
+    // contracts/bounty_escrow/contract.py:49
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.submit_work[routing]() -> void:
+submit_work:
+    // contracts/bounty_escrow/contract.py:59
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    pushint 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    // contracts/bounty_escrow/contract.py:61
+    // assert self.status == b"open", "bounty is not accepting submissions"
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 7 // 0x6f70656e
+    ==
+    assert // bounty is not accepting submissions
+    // contracts/bounty_escrow/contract.py:62
+    // assert Global.latest_timestamp <= self.deadline, "submission deadline has passed"
+    global LatestTimestamp
+    intc_0 // 0
+    bytec 6 // "deadline"
+    app_global_get_ex
+    assert // check self.deadline exists
+    <=
+    assert // submission deadline has passed
+    // contracts/bounty_escrow/contract.py:63
+    // assert Txn.sender != self.creator, "creator cannot submit to their own bounty"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "creator"
+    app_global_get_ex
+    assert // check self.creator exists
+    !=
+    assert // creator cannot submit to their own bounty
+    // contracts/bounty_escrow/contract.py:64
+    // assert Txn.sender not in self.submissions, "only one submission per wallet is allowed"
+    bytec 5 // "submission:"
+    txn Sender
+    concat
+    box_len
+    bury 1
+    !
+    assert // only one submission per wallet is allowed
+    // contracts/bounty_escrow/contract.py:66
+    // self.submissions[Txn.sender] = proof_hash.native
+    extract 2 0
+    bytec 5 // "submission:"
+    txn Sender
+    concat
+    dup
+    box_del
+    pop
+    swap
+    box_put
+    // contracts/bounty_escrow/contract.py:67
+    // self.submission_count = self.submission_count + 1
+    intc_0 // 0
+    bytec_3 // "submission_count"
+    app_global_get_ex
+    assert // check self.submission_count exists
+    intc_1 // 1
+    +
+    bytec_3 // "submission_count"
+    swap
+    app_global_put
+    // contracts/bounty_escrow/contract.py:59
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.close_submissions[routing]() -> void:
+close_submissions:
+    // contracts/bounty_escrow/contract.py:71
+    // assert self.status == b"open", "bounty is not open"
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 7 // 0x6f70656e
+    ==
+    assert // bounty is not open
+    // contracts/bounty_escrow/contract.py:72
+    // assert Global.latest_timestamp > self.deadline, "deadline has not passed yet"
+    global LatestTimestamp
+    intc_0 // 0
+    bytec 6 // "deadline"
+    app_global_get_ex
+    assert // check self.deadline exists
+    >
+    assert // deadline has not passed yet
+    // contracts/bounty_escrow/contract.py:74
+    // if self.submission_count > 0:
+    intc_0 // 0
+    bytec_3 // "submission_count"
+    app_global_get_ex
+    assert // check self.submission_count exists
+    bz close_submissions_else_body@3
+    // contracts/bounty_escrow/contract.py:75
+    // self.status = Bytes(b"under_review")
+    bytec_0 // "status"
+    bytec 8 // 0x756e6465725f726576696577
+    app_global_put
+    // contracts/bounty_escrow/contract.py:76
+    // self.review_started_at = Global.latest_timestamp
+    bytec 11 // "review_started_at"
+    global LatestTimestamp
+    app_global_put
+
+close_submissions_after_if_else@4:
+    // contracts/bounty_escrow/contract.py:69
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+close_submissions_else_body@3:
+    // contracts/bounty_escrow/contract.py:78
+    // self.status = Bytes(b"expired")
+    bytec_0 // "status"
+    bytec 13 // 0x65787069726564
+    app_global_put
+    b close_submissions_after_if_else@4
+
+
+// bounty_escrow.contract.BountyEscrowContract.mark_disputed[routing]() -> void:
+mark_disputed:
+    // contracts/bounty_escrow/contract.py:82
+    // assert Txn.sender == self.creator, "only creator can mark the bounty disputed"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "creator"
+    app_global_get_ex
+    assert // check self.creator exists
+    ==
+    assert // only creator can mark the bounty disputed
+    // contracts/bounty_escrow/contract.py:83
+    // assert self.status == b"under_review", "bounty is not under review"
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 8 // 0x756e6465725f726576696577
+    ==
+    assert // bounty is not under review
+    // contracts/bounty_escrow/contract.py:85
+    // self.status = Bytes(b"disputed")
+    bytec_0 // "status"
+    bytec 14 // 0x6469737075746564
+    app_global_put
+    // contracts/bounty_escrow/contract.py:80
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.approve_winner[routing]() -> void:
+approve_winner:
+    // contracts/bounty_escrow/contract.py:87
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/bounty_escrow/contract.py:89
+    // assert Txn.sender == self.creator, "only creator can approve the winner"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "creator"
+    app_global_get_ex
+    assert // check self.creator exists
+    ==
+    assert // only creator can approve the winner
+    // contracts/bounty_escrow/contract.py:90
+    // assert self.status == b"open" or self.status == b"under_review", "bounty is not reviewable"
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 7 // 0x6f70656e
+    ==
+    bnz approve_winner_bool_true@3
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 8 // 0x756e6465725f726576696577
+    ==
+    bz approve_winner_bool_false@4
+
+approve_winner_bool_true@3:
+    intc_1 // 1
+
+approve_winner_bool_merge@5:
+    // contracts/bounty_escrow/contract.py:90
+    // assert self.status == b"open" or self.status == b"under_review", "bounty is not reviewable"
+    assert // bounty is not reviewable
+    // contracts/bounty_escrow/contract.py:91
+    // assert winner in self.submissions, "winner must have a recorded submission"
+    bytec 5 // "submission:"
+    dig 1
+    dup
+    cover 2
+    concat
+    box_len
+    bury 1
+    assert // winner must have a recorded submission
+    // contracts/bounty_escrow/contract.py:92
+    // assert winner != self.creator, "creator cannot be the winner"
+    intc_0 // 0
+    bytec_1 // "creator"
+    app_global_get_ex
+    assert // check self.creator exists
+    dig 1
+    !=
+    assert // creator cannot be the winner
+    // contracts/bounty_escrow/contract.py:94-97
+    // itxn.Payment(
+    //     receiver=winner,
+    //     amount=self.reward_microalgos,
+    // ).submit()
+    itxn_begin
+    // contracts/bounty_escrow/contract.py:96
+    // amount=self.reward_microalgos,
+    intc_0 // 0
+    bytec_2 // "reward_microalgos"
+    app_global_get_ex
+    assert // check self.reward_microalgos exists
+    itxn_field Amount
+    dup
+    itxn_field Receiver
+    // contracts/bounty_escrow/contract.py:94
+    // itxn.Payment(
+    intc_1 // pay
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // contracts/bounty_escrow/contract.py:94-97
+    // itxn.Payment(
+    //     receiver=winner,
+    //     amount=self.reward_microalgos,
+    // ).submit()
+    itxn_submit
+    // contracts/bounty_escrow/contract.py:99
+    // self.winner = winner
+    bytec 10 // "winner"
+    swap
+    app_global_put
+    // contracts/bounty_escrow/contract.py:100
+    // self.status = Bytes(b"completed")
+    bytec_0 // "status"
+    pushbytes 0x636f6d706c65746564
+    app_global_put
+    // contracts/bounty_escrow/contract.py:87
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+approve_winner_bool_false@4:
+    intc_0 // 0
+    b approve_winner_bool_merge@5
+
+
+// bounty_escrow.contract.BountyEscrowContract.refund_creator[routing]() -> void:
+refund_creator:
+    // contracts/bounty_escrow/contract.py:104
+    // assert Txn.sender == self.creator, "only creator can refund the bounty"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "creator"
+    app_global_get_ex
+    assert // check self.creator exists
+    ==
+    assert // only creator can refund the bounty
+    // contracts/bounty_escrow/contract.py:105
+    // assert self.status == b"expired" or self.status == b"disputed", "refunds are only allowed after expiry or dispute"
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 13 // 0x65787069726564
+    ==
+    bnz refund_creator_bool_true@3
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    bytec 14 // 0x6469737075746564
+    ==
+    bz refund_creator_bool_false@4
+
+refund_creator_bool_true@3:
+    intc_1 // 1
+
+refund_creator_bool_merge@5:
+    // contracts/bounty_escrow/contract.py:105
+    // assert self.status == b"expired" or self.status == b"disputed", "refunds are only allowed after expiry or dispute"
+    assert // refunds are only allowed after expiry or dispute
+    // contracts/bounty_escrow/contract.py:107-110
+    // itxn.Payment(
+    //     receiver=self.creator,
+    //     amount=UInt64(0),
+    // ).submit()
+    itxn_begin
+    // contracts/bounty_escrow/contract.py:108
+    // receiver=self.creator,
+    intc_0 // 0
+    bytec_1 // "creator"
+    app_global_get_ex
+    assert // check self.creator exists
+    // contracts/bounty_escrow/contract.py:109
+    // amount=UInt64(0),
+    intc_0 // 0
+    itxn_field Amount
+    itxn_field Receiver
+    // contracts/bounty_escrow/contract.py:107
+    // itxn.Payment(
+    intc_1 // pay
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // contracts/bounty_escrow/contract.py:107-110
+    // itxn.Payment(
+    //     receiver=self.creator,
+    //     amount=UInt64(0),
+    // ).submit()
+    itxn_submit
+    // contracts/bounty_escrow/contract.py:102
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+refund_creator_bool_false@4:
+    intc_0 // 0
+    b refund_creator_bool_merge@5
+
+
+// bounty_escrow.contract.BountyEscrowContract.get_status[routing]() -> void:
+get_status:
+    // contracts/bounty_escrow/contract.py:114
+    // return self.status
+    intc_0 // 0
+    bytec_0 // "status"
+    app_global_get_ex
+    assert // check self.status exists
+    // contracts/bounty_escrow/contract.py:112
+    // @arc4.abimethod
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.get_submission_count[routing]() -> void:
+get_submission_count:
+    // contracts/bounty_escrow/contract.py:118
+    // return self.submission_count
+    intc_0 // 0
+    bytec_3 // "submission_count"
+    app_global_get_ex
+    assert // check self.submission_count exists
+    // contracts/bounty_escrow/contract.py:116
+    // @arc4.abimethod
+    itob
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.has_submission[routing]() -> void:
+has_submission:
+    // contracts/bounty_escrow/contract.py:120
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/bounty_escrow/contract.py:122
+    // return submitter in self.submissions
+    bytec 5 // "submission:"
+    swap
+    concat
+    box_len
+    bury 1
+    // contracts/bounty_escrow/contract.py:120
+    // @arc4.abimethod
+    pushbytes 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// bounty_escrow.contract.BountyEscrowContract.get_submission_hash[routing]() -> void:
+get_submission_hash:
+    // contracts/bounty_escrow/contract.py:124
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/bounty_escrow/contract.py:126
+    // return self.submissions.get(submitter, default=Bytes())
+    bytec 5 // "submission:"
+    swap
+    concat
+    box_get
+    pushbytes 0x
+    cover 2
+    select
+    // contracts/bounty_escrow/contract.py:124
+    // @arc4.abimethod
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return

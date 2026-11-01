@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Virtual envs
+backend/venv/
+backend/env/
+contracts/.venv/
+
+# Env files
+.env
+.env.*
+
+# Backend
+backend/.pytest_cache/
+backend/serviceAccountKey.json
+
+# Next.js
+.next/
+frontend/.next/
+out/
+frontend/out/
+
+# Builds
+build/
+dist/
+
+# Blockchain / Contracts
+contracts/artifacts/
+backend/contract_artifacts/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Vercel
+.vercel/
+
+# TS
+*.tsbuildinfo
+next-env.d.ts

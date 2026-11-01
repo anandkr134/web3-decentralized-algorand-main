@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-surface-bright: #223f35;
+  --color-tertiary: #ffffff;
+  --color-surface-container-high: #122f26;
+  --color-on-tertiary: #1b352b;
+  --color-on-primary-fixed-variant: #394d06;
+  --color-outline-variant: #45483b;
+  --color-surface-tint: #b6d07c;
+  --color-primary: #ffffff;
+  --color-secondary-container: #4e3c79;
+  --color-on-primary-fixed: #141f00;
+  --color-inverse-primary: #50661f;
+  --color-surface: #001710;
+  --color-on-surface-variant: #c5c8b7;
+  --color-tertiary-fixed-dim: #afcdbe;
+  --color-on-secondary-fixed: #220d4b;
+  --color-surface-container: #06241c;
+  --color-on-secondary-fixed-variant: #4e3c79;
+  --color-on-error: #690005;
+  --color-surface-variant: #1e3a30;
+  --color-secondary-fixed: #e9ddff;
+  --color-surface-dim: #001710;
+  --color-on-tertiary-container: #4f6a5e;
+  --color-secondary: #d1bcff;
+  --color-on-tertiary-fixed-variant: #314c41;
+  --color-surface-container-lowest: #00120b;
+  --color-surface-container-highest: #1e3a30;
+  --color-primary-fixed: #d1ed96;
+  --color-on-tertiary-fixed: #052016;
+  --color-background: #001710;
+  --color-secondary-fixed-dim: #d1bcff;
+  --color-on-background: #caeadc;
+  --color-error: #ffb4ab;
+  --color-primary-container: #d1ed96;
+  --color-outline: #8f9283;
+  --color-on-error-container: #ffdad6;
+  --color-error-container: #93000a;
+  --color-tertiary-container: #cbeada;
+  --color-surface-container-low: #032018;
+  --color-on-secondary-container: #bfaaf0;
+  --color-on-primary-container: #556c24;
+  --color-inverse-on-surface: #19362c;
+  --color-on-secondary: #372561;
+  --color-on-primary: #253500;
+  --color-on-surface: #caeadc;
+  --color-inverse-surface: #caeadc;
+  --color-primary-fixed-dim: #b6d07c;
+  --color-tertiary-fixed: #cbeada;
+
+  --font-headline: "Dela Gothic One", cursive;
+  --font-body: "Bricolage Grotesque", sans-serif;
+  --font-label: "Bricolage Grotesque", sans-serif;
+  --font-mmc: "Dela Gothic One", cursive;
+
+  --radius-DEFAULT: 1rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.neo-brutal-shadow {
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+}
+
+.neo-brutal-shadow-lime {
+  box-shadow: 8px 8px 0px 0px var(--color-primary-fixed);
+}
+
+.header-anchor {
+  font-family: var(--font-headline);
+}
+
+.neubrutalist-card {
+  border: 4px solid #000000;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+}
+
+.neubrutalist-button-primary {
+  background-color: var(--color-primary-fixed);
+  color: #000000;
+  border: 4px solid #000000;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  transition: all 0.1s;
+}
+
+.neubrutalist-button-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+}

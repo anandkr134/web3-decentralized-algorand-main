@@ -1,0 +1,9 @@
+#pragma version 11
+#pragma typetrack false
+
+// bounty_escrow.contract.BountyEscrowContract.clear_state_program() -> uint64:
+main:
+    // contracts/bounty_escrow/contract.py:129
+    // return True
+    pushint 1
+    return
